@@ -43,9 +43,7 @@
           </select>
         </div>
         <button id="today-button" class="today-button">Hoy</button>
-        <!-- FUTURE FEATURE: Export Button
-        <button id="export-calendar-button" class="today-button" style="background-color: #17a2b8;">Exportar (iCal)</button>
-        -->
+        <button id="export-ical-button" class="today-button" style="background-color: #17a2b8;">Exportar (iCal)</button>
       </div>
 
       <div class="legend">
@@ -75,17 +73,17 @@
 
   <script src="script.js"></script>
 
-  <!-- FUTURE FEATURE: Modal for Holiday Details
-  <div id="holiday-modal" class="modal" style="display:none;">
+  <div id="holiday-modal" class="modal">
       <div class="modal-content">
-          <span class="close-button" onclick="document.getElementById('holiday-modal').style.display='none'">&times;</span>
-          <h3 id="modal-title">Detalles del Feriado</h3>
-          <p id="modal-date"></p>
-          <p id="modal-description"></p>
-          <p id="modal-type"></p>
+          <span class="close-button">&times;</span>
+          <h3 id="modal-holiday-name">Holiday Name</h3>
+          <p><strong>Fecha:</strong> <span id="modal-holiday-date">Date</span></p>
+          <p id="modal-holiday-original-date-container" style="display:none;">
+              <strong>Fecha Original:</strong> <span id="modal-holiday-original-date">Original Date</span> (Movido por Ley Emiliani)
+          </p>
+          <p><strong>Tipo:</strong> <span id="modal-holiday-description">Description/Type</span></p>
       </div>
   </div>
-  -->
 </body>
 
 </html>

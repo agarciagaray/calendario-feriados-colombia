@@ -112,4 +112,81 @@ document.addEventListener('DOMContentLoaded', () => {
         displayTestResult('applyLeyEmiliani general error', false, e.message);
     }
 
+    // Access iCal testable functions
+    const { formatICalDate, generateICalData } = window.testableFunctions || {};
+
+    if (!formatICalDate || !generateICalData) {
+        displayTestResult('iCal Function Loading', false, 'formatICalDate or generateICalData not found.');
+    } else {
+        // --- Tests for formatICalDate ---
+        try {
+            displayTestResult('formatICalDate: Correct Format (Jan 1)',
+                formatICalDate(new Date(2024, 0, 1)) === '20240101',
+                `Expected 20240101, Got ${formatICalDate(new Date(2024, 0, 1))}`);
+
+            displayTestResult('formatICalDate: Correct Format with Padding (Mar 5)',
+                formatICalDate(new Date(2024, 2, 5)) === '20240305',
+                `Expected 20240305, Got ${formatICalDate(new Date(2024, 2, 5))}`);
+
+            displayTestResult('formatICalDate: Correct Format (Dec 31)',
+                formatICalDate(new Date(2023, 11, 31)) === '20231231',
+                `Expected 20231231, Got ${formatICalDate(new Date(2023, 11, 31))}`);
+        } catch (e) {
+            displayTestResult('formatICalDate general error', false, e.message);
+        }
+
+        // --- Tests for generateICalData ---
+        try {
+            // Test Case 1: Single Event
+            const singleEvent = [{ name: 'Año Nuevo', date: new Date(2024, 0, 1), type: 'Feriado Cívico' }];
+            const icalOutputSingle = generateICalData(2024, singleEvent);
+
+            displayTestResult('generateICalData (Single): Contains BEGIN:VCALENDAR', icalOutputSingle.includes('BEGIN:VCALENDAR'), 'Missing BEGIN:VCALENDAR');
+            displayTestResult('generateICalData (Single): Contains END:VCALENDAR', icalOutputSingle.includes('END:VCALENDAR'), 'Missing END:VCALENDAR');
+            displayTestResult('generateICalData (Single): Contains VERSION:2.0', icalOutputSingle.includes('VERSION:2.0'), 'Missing VERSION:2.0');
+            displayTestResult('generateICalData (Single): Contains PRODID', icalOutputSingle.includes('PRODID:-//AlejandroGarcia//ColombianHolidayCalendar//NONSGML v1.0//ES'), 'Missing or incorrect PRODID');
+            displayTestResult('generateICalData (Single): Contains X-WR-CALNAME', icalOutputSingle.includes('X-WR-CALNAME:Feriados Colombia 2024'), 'Missing or incorrect X-WR-CALNAME');
+            displayTestResult('generateICalData (Single): Contains BEGIN:VEVENT', icalOutputSingle.includes('BEGIN:VEVENT'), 'Missing BEGIN:VEVENT');
+            displayTestResult('generateICalData (Single): Contains SUMMARY:Año Nuevo', icalOutputSingle.includes('SUMMARY:Año Nuevo'), 'Missing correct SUMMARY');
+            displayTestResult('generateICalData (Single): Contains DTSTART;VALUE=DATE:20240101', icalOutputSingle.includes('DTSTART;VALUE=DATE:20240101'), 'Missing correct DTSTART');
+            displayTestResult('generateICalData (Single): Contains DTEND;VALUE=DATE:20240102', icalOutputSingle.includes('DTEND;VALUE=DATE:20240102'), 'Missing correct DTEND');
+            displayTestResult('generateICalData (Single): Contains UID', icalOutputSingle.includes('UID:20240101-AoNuevo@colombian-holidays.agarc.dev'), 'Missing or incorrect UID');
+            displayTestResult('generateICalData (Single): Contains DTSTAMP', icalOutputSingle.includes('DTSTAMP:'), 'Missing DTSTAMP');
+            displayTestResult('generateICalData (Single): Contains DESCRIPTION:Feriado Cívico', icalOutputSingle.includes('DESCRIPTION:Feriado Cívico'), 'Missing correct DESCRIPTION');
+            displayTestResult('generateICalData (Single): Contains END:VEVENT', icalOutputSingle.includes('END:VEVENT'), 'Missing END:VEVENT');
+
+            // Test Case 2: Event with Moved Date and Description
+            const movedEvent = [{
+                name: 'San José',
+                date: new Date(2025, 2, 24), // Monday March 24, 2025
+                originalDate: new Date(2025, 2, 19), // Original: Wednesday March 19, 2025
+                moved: true,
+                type: 'Religioso (Católico)'
+            }];
+            const icalOutputMoved = generateICalData(2025, movedEvent);
+            const expectedMovedDescription = 'DESCRIPTION:Religioso (Católico) (Originalmente: mié., 19 mar.). Movido por Ley Emiliani.';
+            displayTestResult('generateICalData (Moved): Correct Description',
+                icalOutputMoved.includes(expectedMovedDescription),
+                `Expected "${expectedMovedDescription}", Got DESCRIPTION line: ${icalOutputMoved.match(/DESCRIPTION:.*/gm)?.[0]}`);
+            displayTestResult('generateICalData (Moved): Contains DTSTART;VALUE=DATE:20250324', icalOutputMoved.includes('DTSTART;VALUE=DATE:20250324'), 'DTSTART incorrect for moved event');
+
+
+            // Test Case 3: Multiple Events
+            const multipleEvents = [
+                { name: 'Año Nuevo', date: new Date(2024, 0, 1), type: 'Feriado Cívico' },
+                { name: 'Día del Trabajo', date: new Date(2024, 4, 1), type: 'Conmemoración' }
+            ];
+            const icalOutputMultiple = generateICalData(2024, multipleEvents);
+            const vEventStarts = (icalOutputMultiple.match(/BEGIN:VEVENT/g) || []).length;
+            const vEventEnds = (icalOutputMultiple.match(/END:VEVENT/g) || []).length;
+            displayTestResult('generateICalData (Multiple): Correct VEVENT count',
+                vEventStarts === 2 && vEventEnds === 2,
+                `Expected 2 VEVENTs, Got ${vEventStarts} BEGIN:VEVENT and ${vEventEnds} END:VEVENT`);
+            displayTestResult('generateICalData (Multiple): Contains SUMMARY:Año Nuevo', icalOutputMultiple.includes('SUMMARY:Año Nuevo'));
+            displayTestResult('generateICalData (Multiple): Contains SUMMARY:Día del Trabajo', icalOutputMultiple.includes('SUMMARY:Día del Trabajo'));
+
+        } catch (e) {
+            displayTestResult('generateICalData general error', false, e.message + (e.stack ? `\n${e.stack}`: ''));
+        }
+    }
 });
