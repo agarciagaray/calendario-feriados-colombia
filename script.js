@@ -202,6 +202,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModalButton = holidayModal.querySelector('.close-button');
     const exportICalButton = document.getElementById('export-ical-button'); // Export button
 
+    // Detailed descriptions for Carnival days
+    const carnivalDayNames = [
+        "Sábado de Carnaval",
+        "Domingo de Carnaval",
+        "Lunes de Carnaval",
+        "Martes de Carnaval (Entierro de Joselito)"
+    ];
+    const carnivalDayDescriptions = [
+        "Batalla de Flores: El desfile inaugural, con carrozas, comparsas, grupos de baile y disfraces, encabezado por la Reina del Carnaval.\nDesfile del Rey Momo: Un desfile satírico donde el personaje del Rey Momo, que representa la crítica social, recorre las calles.",
+        "Gran Parada de Tradición y Folclor: Un desfile que muestra la riqueza de las danzas y disfraces autóctonos de la región, como la danza del Congo, el Garabato, el Mapalé, entre otros.",
+        "Gran Parada de Comparsas: Un desfile donde las comparsas muestran sus elaborados trajes y coreografías, destacando la creatividad y la tradición.\nFestival de Orquestas: Un evento musical que celebra la rica tradición musical de la región con la presentación de diversas orquestas.\nEncuentro de Comedias: Un espacio para el humor y la sátira, con presentaciones de grupos que representan situaciones de la vida cotidiana con ingenio.",
+        "Entierro de Joselito: Un evento que marca el fin del Carnaval, donde un muñeco llamado Joselito es \"enterrado\" por los asistentes, simbolizando el fin de la fiesta y el inicio de la Cuaresma."
+    ];
+
     // State variables for current view
     let currentMonth = new Date().getMonth(); // 0-indexed month
     let currentYear = new Date().getFullYear();
@@ -279,12 +293,13 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {Object} holidayData - An object containing details about the holiday.
      *                               Expected properties: name, date (Date object),
      *                               originalDate (Date object, optional), moved (boolean, optional),
-     *                               type (string, optional).
+     *                               description (string, optional, formerly type).
      */
     function openModal(holidayData) {
         modalHolidayName.textContent = holidayData.name;
         modalHolidayDate.textContent = holidayData.date.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-        modalHolidayDescription.textContent = holidayData.type || 'No especificado';
+        // Using 'description' field now for modal content, which can be type or detailed carnival desc.
+        modalHolidayDescription.textContent = holidayData.description || 'No especificado';
 
         if (holidayData.moved && holidayData.originalDate) {
             modalHolidayOriginalDate.textContent = holidayData.originalDate.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
@@ -396,18 +411,29 @@ document.addEventListener('DOMContentLoaded', () => {
         let holidayDataForModal = null;
 
         if (holiday) { // Prioritize full holiday object if available
-            holidayDataForModal = { ...holiday, date: date }; // Ensure 'date' is the specific cell's date
+            holidayDataForModal = { ...holiday, date: date, description: holiday.type }; // Use 'type' as 'description' for regular holidays
         } else if (isCarnival) {
-            holidayDataForModal = {
-                name: 'Carnaval de Barranquilla',
-                date: date,
-                type: 'Celebración Cultural'
-            };
+            const carnivalDayIndex = carnivalData.carnivalDays.findIndex(
+                carnivalDate => carnivalDate.toDateString() === date.toDateString()
+            );
+            if (carnivalDayIndex !== -1) {
+                holidayDataForModal = {
+                    name: carnivalDayNames[carnivalDayIndex] || 'Carnaval de Barranquilla',
+                    date: date,
+                    description: carnivalDayDescriptions[carnivalDayIndex] || 'Celebración del Carnaval.'
+                };
+            } else { // Should not happen if isCarnival is true, but as a fallback
+                holidayDataForModal = {
+                    name: 'Carnaval de Barranquilla',
+                    date: date,
+                    description: 'Celebración Cultural'
+                };
+            }
         } else if (carnivalData.ashWednesday.toDateString() === date.toDateString()) {
             holidayDataForModal = {
                 name: 'Miércoles de Ceniza',
                 date: date,
-                type: 'Religioso (Católico)'
+                description: 'Religioso (Católico)' // Using 'description' field
             };
         }
 
@@ -422,7 +448,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     date: date, // This is the actual date of the cell being clicked
                     originalDate: holidayDataForModal.originalDate, // From the main holiday list if Emiliani
                     moved: holidayDataForModal.moved, // From the main holiday list if Emiliani
-                    type: holidayDataForModal.type || (holiday ? (holiday.moved ? 'Feriado (Ley Emiliani)' : 'Feriado') : 'Día Especial')
+                    // The 'description' field is now directly set in holidayDataForModal
+                    description: holidayDataForModal.description || (holiday ? (holiday.moved ? 'Feriado (Ley Emiliani)' : 'Feriado') : 'Día Especial')
                 };
                 openModal(finalHolidayData);
             });
