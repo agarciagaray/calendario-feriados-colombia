@@ -240,9 +240,9 @@ h1 {
     
     .legend {
         display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 40px;
+        flex-direction: column; /* Changed from row to column */
+        align-items: center; /* Align items to center in column layout */
+        gap: 10px; /* Reduced gap for tighter vertical spacing */
         justify-content: center;
         margin-bottom: 20px;
     }
@@ -254,9 +254,84 @@ h1 {
     } */
     
     .day-cell {
-        font-size: 0.8em;
-        min-height: 25px;
+        font-size: 0.75em; /* Slightly reduced font size */
+        min-height: 20px; /* Reduced min-height */
+        padding: 4px 2px; /* Reduced padding */
+    }
+
+    .day-header {
+        font-size: 0.7em; /* Reduced font size for day headers */
+        padding: 6px 2px; /* Adjusted padding */
+    }
+
+    .monthly-view .month-name {
+        font-size: 1.3em; /* Adjust font size for monthly view month name */
+    }
+
+    .monthly-view .day-cell {
+        min-height: 40px; /* Adjust min-height for monthly view day cells */
+        padding: 6px;    /* Adjust padding for monthly view day cells */
+        font-size: 0.85em; /* Adjust font size for monthly view day cells */
+    }
+
+    .month-navigation button {
+        padding: 8px 12px; /* Adjust padding for navigation buttons */
+        font-size: 0.9em;  /* Adjust font size for navigation buttons */
     }
 }
+
+/* FUTURE FEATURE: Basic styles for Holiday Details Modal */
+/*
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#modal-title {
+    margin-top: 0;
+    color: #333;
+}
+
+#modal-description, #modal-date, #modal-type {
+    color: #555;
+    font-size: 0.95em;
+}
+*/
 
 
