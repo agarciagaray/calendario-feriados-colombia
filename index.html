@@ -10,15 +10,16 @@
 
 <body>
   <div class="header">
-    <div class="container">
-      <h1>Calendario de Feriados Colombia</h1>
-
-      <div class="controls">
-        <div class="control-group">
-          <label for="year-select">Seleccionar Año:</label>
-          <select id="year-select">
-            <option value="2020">2020</option>
-            <option value="2021">2021</option>
+    <div class="container header-container"> <!-- Added header-container class -->
+      <img src="logo-ag.svg" alt="Logo AG" id="page-logo">
+      <div class="header-main-content"> <!-- Wrapper for title and controls -->
+        <h1>Calendario de Feriados Colombia</h1>
+        <div class="controls">
+          <div class="control-group">
+            <label for="year-select">Seleccionar Año:</label>
+            <select id="year-select">
+              <option value="2020">2020</option>
+              <option value="2021">2021</option>
             <option value="2022">2022</option>
             <option value="2023">2023</option>
             <option value="2024">2024</option>
@@ -43,17 +44,18 @@
           </select>
         </div>
         <button id="today-button" class="today-button">Hoy</button>
-      </div>
+          <button id="export-ical-button" class="today-button" style="background-color: #17a2b8;">Exportar (iCal)</button>
+        </div>
 
-      <div class="legend">
-        <span><span class="legend-color" style="background:#ffe6e6"></span>  Domingos  </span>
-        <span><span class="legend-color" style="background:#ff9999"></span>  Feriados  </span>
-        <span><span class="legend-color" style="background:#ff8c42"></span>  Feriados movidos (Ley Emiliani)  </span>
-        <span><span class="legend-color" style="background:#28a745"></span>  Carnavales (Barranquilla)  </span>
-        <span><span class="legend-color" style="background:#6c757d"></span>  Miércoles de Ceniza  </span>
-      </div>
+        <div class="legend">
+          <span><span class="legend-color" style="background:#ffe6e6"></span>  Domingos  </span>
+          <span><span class="legend-color" style="background:#ff9999"></span>  Feriados  </span>
+          <span><span class="legend-color" style="background:#ff8c42"></span>  Feriados movidos (Ley Emiliani)  </span>
+          <span><span class="legend-color" style="background:#28a745"></span>  Carnavales (Barranquilla)  </span>
+          <span><span class="legend-color" style="background:#6c757d"></span>  Miércoles de Ceniza  </span>
+        </div>
+      </div> <!-- End of header-main-content -->
     </div>
-  </div>
   </div>
 
   <div class="container">
@@ -71,6 +73,18 @@
   </footer>
 
   <script src="script.js"></script>
+
+  <div id="holiday-modal" class="modal">
+      <div class="modal-content">
+          <span class="close-button">&times;</span>
+          <h3 id="modal-holiday-name">Holiday Name</h3>
+          <p><strong>Fecha:</strong> <span id="modal-holiday-date">Date</span></p>
+          <p id="modal-holiday-original-date-container" style="display:none;">
+              <strong>Fecha Original:</strong> <span id="modal-holiday-original-date">Original Date</span> (Movido por Ley Emiliani)
+          </p>
+          <p><strong>Tipo:</strong> <span id="modal-holiday-description">Description/Type</span></p>
+      </div>
+  </div>
 </body>
 
 </html>

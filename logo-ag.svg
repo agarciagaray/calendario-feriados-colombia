@@ -1,0 +1,13 @@
+<svg viewBox="0 0 90 50" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .logo-text-ag {
+      font-family: Arial, Helvetica, sans-serif; /* Common sans-serif fonts */
+      font-size: 40px;
+      font-weight: bold;
+      fill: #0056b3; /* A darker blue, related to the button hover color */
+      text-anchor: middle; /* Centers the text horizontally on its x coordinate */
+    }
+  </style>
+  <text x="25" y="42" class="logo-text-ag">A</text>
+  <text x="65" y="42" class="logo-text-ag">G</text>
+</svg>
