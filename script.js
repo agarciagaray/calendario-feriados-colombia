@@ -97,32 +97,32 @@ function getHolidays(year) {
     // and then L[currentLang].holidayNames.ANO_NUEVO would provide the display name.
     // Fixed holidays that don't move
     let holidays = [
-        { name: 'Año Nuevo', date: new Date(year, 0, 1), fixed: true },
-        { name: 'Día del Trabajo', date: new Date(year, 4, 1), fixed: true },
-        { name: 'Día de la Independencia', date: new Date(year, 6, 20), fixed: true },
-        { name: 'Batalla de Boyacá', date: new Date(year, 7, 7), fixed: true },
-        { name: 'Inmaculada Concepción', date: new Date(year, 11, 8), fixed: true },
-        { name: 'Navidad', date: new Date(year, 11, 25), fixed: true }
+        { name: 'Año Nuevo', date: new Date(year, 0, 1), fixed: true, type: 'Feriado Cívico' },
+        { name: 'Día del Trabajo', date: new Date(year, 4, 1), fixed: true, type: 'Feriado Cívico' },
+        { name: 'Día de la Independencia', date: new Date(year, 6, 20), fixed: true, type: 'Feriado Cívico' },
+        { name: 'Batalla de Boyacá', date: new Date(year, 7, 7), fixed: true, type: 'Feriado Cívico' },
+        { name: 'Inmaculada Concepción', date: new Date(year, 11, 8), fixed: true, type: 'Religioso (Católico)' },
+        { name: 'Navidad', date: new Date(year, 11, 25), fixed: true, type: 'Religioso (Cristiano)' }
     ];
 
     // Calculate Easter Sunday
     const easter = getEasterSunday(year);
 
     // Easter-related holidays (these don't move with Ley Emiliani)
-    holidays.push({ name: 'Jueves Santo', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() - 3), fixed: true });
-    holidays.push({ name: 'Viernes Santo', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() - 2), fixed: true });
+    holidays.push({ name: 'Jueves Santo', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() - 3), fixed: true, type: 'Religioso (Católico)' });
+    holidays.push({ name: 'Viernes Santo', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() - 2), fixed: true, type: 'Religioso (Católico)' });
 
     // Holidays that can be moved by Ley Emiliani
-    holidays.push({ name: 'Epifanía', date: new Date(year, 0, 6), fixed: false });
-    holidays.push({ name: 'San José', date: new Date(year, 2, 19), fixed: false });
-    holidays.push({ name: 'Ascensión de Jesús', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 39), fixed: false });
-    holidays.push({ name: 'Corpus Christi', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 60), fixed: false });
-    holidays.push({ name: 'Sagrado Corazón', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 68), fixed: false });
-    holidays.push({ name: 'San Pedro y San Pablo', date: new Date(year, 5, 29), fixed: false });
-    holidays.push({ name: 'Asunción de la Virgen', date: new Date(year, 7, 15), fixed: false });
-    holidays.push({ name: 'Día de la Raza', date: new Date(year, 9, 12), fixed: false });
-    holidays.push({ name: 'Día de Todos los Santos', date: new Date(year, 10, 1), fixed: false });
-    holidays.push({ name: 'Independencia de Cartagena', date: new Date(year, 10, 11), fixed: false });
+    holidays.push({ name: 'Epifanía', date: new Date(year, 0, 6), fixed: false, type: 'Religioso (Católico)' });
+    holidays.push({ name: 'San José', date: new Date(year, 2, 19), fixed: false, type: 'Religioso (Católico)' });
+    holidays.push({ name: 'Ascensión de Jesús', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 39), fixed: false, type: 'Religioso (Católico)' });
+    holidays.push({ name: 'Corpus Christi', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 60), fixed: false, type: 'Religioso (Católico)' });
+    holidays.push({ name: 'Sagrado Corazón', date: new Date(easter.getFullYear(), easter.getMonth(), easter.getDate() + 68), fixed: false, type: 'Religioso (Católico)' });
+    holidays.push({ name: 'San Pedro y San Pablo', date: new Date(year, 5, 29), fixed: false, type: 'Religioso (Católico)' });
+    holidays.push({ name: 'Asunción de la Virgen', date: new Date(year, 7, 15), fixed: false, type: 'Religioso (Católico)' });
+    holidays.push({ name: 'Día de la Raza', date: new Date(year, 9, 12), fixed: false, type: 'Feriado Cívico' });
+    holidays.push({ name: 'Día de Todos los Santos', date: new Date(year, 10, 1), fixed: false, type: 'Religioso (Católico)' });
+    holidays.push({ name: 'Independencia de Cartagena', date: new Date(year, 10, 11), fixed: false, type: 'Feriado Cívico' });
 
     return holidays;
 }
@@ -191,6 +191,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextMonthBtn = document.getElementById('next-month');
     const currentMonthYear = document.getElementById('current-month-year');
     const todayButton = document.getElementById('today-button');
+
+    // Modal DOM Elements
+    const holidayModal = document.getElementById('holiday-modal');
+    const modalHolidayName = document.getElementById('modal-holiday-name');
+    const modalHolidayDate = document.getElementById('modal-holiday-date');
+    const modalHolidayOriginalDateContainer = document.getElementById('modal-holiday-original-date-container');
+    const modalHolidayOriginalDate = document.getElementById('modal-holiday-original-date');
+    const modalHolidayDescription = document.getElementById('modal-holiday-description');
+    const closeModalButton = holidayModal.querySelector('.close-button');
+    const exportICalButton = document.getElementById('export-ical-button'); // Export button
 
     // State variables for current view
     let currentMonth = new Date().getMonth(); // 0-indexed month
@@ -263,6 +273,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Note: The core holiday calculation functions (getEasterSunday, getCarnivalDays, getHolidays, applyLeyEmiliani)
     // are now defined globally at the top of this file for better structure and testability.
+
+    /**
+     * Opens the holiday details modal and populates it with information.
+     * @param {Object} holidayData - An object containing details about the holiday.
+     *                               Expected properties: name, date (Date object),
+     *                               originalDate (Date object, optional), moved (boolean, optional),
+     *                               type (string, optional).
+     */
+    function openModal(holidayData) {
+        modalHolidayName.textContent = holidayData.name;
+        modalHolidayDate.textContent = holidayData.date.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        modalHolidayDescription.textContent = holidayData.type || 'No especificado';
+
+        if (holidayData.moved && holidayData.originalDate) {
+            modalHolidayOriginalDate.textContent = holidayData.originalDate.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            modalHolidayOriginalDateContainer.style.display = 'block';
+        } else {
+            modalHolidayOriginalDateContainer.style.display = 'none';
+        }
+        holidayModal.style.display = 'block';
+    }
+
+    /**
+     * Closes the holiday details modal.
+     */
+    function closeModal() {
+        holidayModal.style.display = 'none';
+    }
+
+    // Event listeners for closing the modal
+    closeModalButton.addEventListener('click', closeModal);
+    window.addEventListener('click', (event) => {
+        if (event.target === holidayModal) { // Clicked on the modal backdrop
+            closeModal();
+        }
+    });
 
     /**
      * Main function to render the calendar based on selected year and view (annual/monthly).
@@ -341,10 +387,47 @@ document.addEventListener('DOMContentLoaded', () => {
             dayCell.classList.add('today');
         }
 
-        // FUTURE: Add event listener here to show holiday details on click.
+        // FUTURE: Add event listener here to show holiday details on click. (Implemented below)
         // This could involve populating a modal with holiday.name, holiday.originalDate (if moved),
         // and potentially a description if available.
         // Example: dayCell.addEventListener('click', () => showHolidayDetails(holiday, date));
+
+        // --- Add click listener for modal ---
+        let holidayDataForModal = null;
+
+        if (holiday) { // Prioritize full holiday object if available
+            holidayDataForModal = { ...holiday, date: date }; // Ensure 'date' is the specific cell's date
+        } else if (isCarnival) {
+            holidayDataForModal = {
+                name: 'Carnaval de Barranquilla',
+                date: date,
+                type: 'Celebración Cultural'
+            };
+        } else if (carnivalData.ashWednesday.toDateString() === date.toDateString()) {
+            holidayDataForModal = {
+                name: 'Miércoles de Ceniza',
+                date: date,
+                type: 'Religioso (Católico)'
+            };
+        }
+
+        if (holidayDataForModal) {
+            dayCell.style.cursor = 'pointer'; // Indicate it's clickable
+            dayCell.addEventListener('click', () => {
+                // If the holiday object from getHolidays already has 'type', it will be used.
+                // Otherwise, the synthetic 'type' for Carnival/Ash Wednesday is used.
+                // Ensure the 'date' in holidayDataForModal is the actual cell date, not potentially a moved date's original instance.
+                const finalHolidayData = {
+                    name: holidayDataForModal.name,
+                    date: date, // This is the actual date of the cell being clicked
+                    originalDate: holidayDataForModal.originalDate, // From the main holiday list if Emiliani
+                    moved: holidayDataForModal.moved, // From the main holiday list if Emiliani
+                    type: holidayDataForModal.type || (holiday ? (holiday.moved ? 'Feriado (Ley Emiliani)' : 'Feriado') : 'Día Especial')
+                };
+                openModal(finalHolidayData);
+            });
+        }
+        // --- End click listener for modal ---
 
         return dayCell;
     }
@@ -457,21 +540,124 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial render on page load
     renderCalendar();
-});
 
-// FUTURE FEATURE: function generateICalData(year, holidays) { /* ... */ }
-// This function would iterate through all holidays (original and moved) for the given year,
-// format them as iCalendar (.ics) events, and then trigger a download of the .ics file.
-// Each event should have a UID, start date (DTSTART), end date (DTEND, typically next day for all-day events),
-// summary (holiday name), and potentially a description (e.g., if it was moved by Ley Emiliani).
-// Example event structure:
-// BEGIN:VEVENT
-// UID:20240101@colombianholidays.example.com
-// DTSTAMP:YYYYMMDDTHHMMSSZ (timestamp of generation)
-// DTSTART;VALUE=DATE:20240101
-// DTEND;VALUE=DATE:20240102
-// SUMMARY:Año Nuevo
-// END:VEVENT
+    // --- iCalendar Export Functionality ---
+
+    /**
+     * Formats a JavaScript Date object into YYYYMMDD string format for iCalendar.
+     * @param {Date} date - The date to format.
+     * @returns {string} The date string in YYYYMMDD format.
+     */
+    function formatICalDate(date) {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}${month}${day}`;
+    }
+
+    /**
+     * Generates iCalendar (.ics) data string from a list of events.
+     * @param {number} year - The year for which the calendar is generated.
+     * @param {Array<Object>} eventsToExport - Array of event objects.
+     *                                         Each object should have: name, date, type,
+     *                                         optional: originalDate, moved.
+     * @returns {string} The iCalendar data as a string.
+     */
+    function generateICalData(year, eventsToExport) {
+        let icalString = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//AlejandroGarcia//ColombianHolidayCalendar//NONSGML v1.0//ES', // Personalized PRODID
+            'CALSCALE:GREGORIAN',
+            `X-WR-CALNAME:Feriados Colombia ${year}` // Calendar name
+        ].join('\r\n') + '\r\n';
+
+        const dtstamp = new Date().toISOString().replace(/[-:.]/g, '').slice(0, 15) + 'Z';
+
+        eventsToExport.forEach(event => {
+            const startDate = event.date;
+            const endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + 1); // All-day events typically end the next day
+
+            const uid = `${formatICalDate(startDate)}-${event.name.replace(/[^a-zA-Z0-9]/g, '')}@colombian-holidays.agarc.dev`;
+
+            let description = event.type || '';
+            if (event.moved && event.originalDate) {
+                description += ` (Originalmente: ${event.originalDate.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })}). Movido por Ley Emiliani.`;
+            }
+            description = description.replace(/\n/g, '\\n'); // Escape newlines
+
+            icalString += [
+                'BEGIN:VEVENT',
+                `UID:${uid}`,
+                `DTSTAMP:${dtstamp}`,
+                `DTSTART;VALUE=DATE:${formatICalDate(startDate)}`,
+                `DTEND;VALUE=DATE:${formatICalDate(endDate)}`,
+                `SUMMARY:${event.name}`,
+                `DESCRIPTION:${description}`,
+                // Optional: Add location if relevant, or other properties
+                // 'LOCATION:Colombia',
+                'END:VEVENT'
+            ].join('\r\n') + '\r\n';
+        });
+
+        icalString += 'END:VCALENDAR\r\n';
+        return icalString;
+    }
+
+    /**
+     * Handles the iCalendar export process.
+     * Collects events, generates iCal data, and triggers download.
+     */
+    function handleExportICal() {
+        const yearToExport = parseInt(yearSelect.value);
+
+        // 1. Collect all holidays from getHolidays (already processed by Ley Emiliani)
+        const processedHolidays = applyLeyEmiliani(getHolidays(yearToExport));
+
+        // 2. Get Carnival and Ash Wednesday
+        const carnivalData = getCarnivalDays(yearToExport);
+        const carnivalEvents = carnivalData.carnivalDays.map(d => ({
+            name: 'Carnaval de Barranquilla',
+            date: d,
+            type: 'Celebración Cultural'
+        }));
+        const ashWednesdayEvent = {
+            name: 'Miércoles de Ceniza',
+            date: carnivalData.ashWednesday,
+            type: 'Religioso (Católico)'
+        };
+
+        // 3. Combine all events
+        // We need to be careful about duplicates if a Carnival day or Ash Wednesday is also a listed holiday (unlikely but possible).
+        // For simplicity, we'll add them; iCal clients often handle duplicate UIDs or overlapping events gracefully.
+        // A more robust approach might filter duplicates based on date and name.
+        const eventsToExport = [
+            ...processedHolidays, // These objects already have name, date, type, moved, originalDate
+            ...carnivalEvents,
+            ashWednesdayEvent
+        ];
+
+        const icalData = generateICalData(yearToExport, eventsToExport);
+
+        const blob = new Blob([icalData], { type: 'text/calendar;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `Feriados_Colombia_${yearToExport}.ics`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url); // Clean up the object URL
+    }
+
+    // Attach event listener to the export button
+    if (exportICalButton) {
+        exportICalButton.addEventListener('click', handleExportICal);
+    }
+
+});
 
 // For testing purposes, expose functions if running in a test-like environment (e.g. test-runner.html)
 if (typeof window !== 'undefined' && window.location && window.location.pathname && window.location.pathname.includes('test-runner.html')) {
@@ -479,6 +665,8 @@ if (typeof window !== 'undefined' && window.location && window.location.pathname
         getEasterSunday,
         getCarnivalDays,
         getHolidays,
-        applyLeyEmiliani
+        applyLeyEmiliani,
+        formatICalDate, // Expose for potential testing
+        generateICalData // Expose for potential testing
     };
 }
