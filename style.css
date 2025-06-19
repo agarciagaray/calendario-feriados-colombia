@@ -3,7 +3,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f8f9fa;
-    padding-top: 160px; /* Espacio para la cabecera fija */
+    padding-top: 220px; /* Espacio para la cabecera fija */
 }
 
 .header {
@@ -21,7 +21,10 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-}ckground-color: #fff;
+}
+
+.card {
+    background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -48,13 +51,8 @@ h1 {
 
 .controls select {
     padding: 5px 10px;
-    border: 1px solid #cc.controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .control-group {
@@ -79,10 +77,13 @@ h1 {
 }
 
 .legend-color {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border-radius: 3px;
     border: 1px solid #ccc;
+    display: inline-block;
+    margin-right: 6px;
+    vertical-align: middle;
 }
 
 .annual-view {
@@ -238,9 +239,19 @@ h1 {
     }
     
     .legend {
-        flex-direction: column;
+        display: flex;
+        flex-direction: row;
         align-items: center;
+        gap: 40px;
+        justify-content: center;
+        margin-bottom: 20px;
     }
+
+    /* .legend span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    } */
     
     .day-cell {
         font-size: 0.8em;
