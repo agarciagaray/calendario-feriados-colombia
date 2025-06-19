@@ -9,45 +9,68 @@
 </head>
 
 <body>
+  <div class="header">
+    <div class="container">
+      <h1>Calendario de Feriados Colombia</h1>
+
+      <div class="controls">
+        <div class="control-group">
+          <label for="year-select">Seleccionar Año:</label>
+          <select id="year-select">
+            <option value="2020">2020</option>
+            <option value="2021">2021</option>
+            <option value="2022">2022</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025" selected>2025</option>
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
+            <option value="2028">2028</option>
+            <option value="2029">2029</option>
+            <option value="2030">2030</option>
+            <option value="2031">2031</option>
+            <option value="2032">2032</option>
+            <option value="2033">2033</option>
+            <option value="2034">2034</option>
+            <option value="2035">2035</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="view-select">Vista:</label>
+          <select id="view-select">
+            <option value="annual">Anual</option>
+            <option value="monthly">Mensual</option>
+          </select>
+        </div>
+        <button id="today-button" class="today-button">Hoy</button>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item">
+          <div class="legend-color" style="background-color: #ffe6e6;"></div>
+          <span>Domingos</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background-color: #ff9999;"></div>
+          <span>Feriados</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background-color: #ff8c42;"></div>
+          <span>Feriados movidos (Ley Emiliani)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background-color: #28a745;"></div>
+          <span>Carnavales (Barranquilla)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background-color: #6c757d;"></div>
+          <span>Miércoles de Ceniza</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="container">
-    <h1>Calendario de Feriados Colombia</h1>
-    <div class="controls">
-      <div>
-        <label for="year-select">Seleccionar Año:</label>
-        <select id="year-select"></select>
-      </div>
-      <div>
-        <label for="view-select">Vista:</label>
-        <select id="view-select">
-          <option value="annual">Anual</option>
-          <option value="monthly">Mensual</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="legend">
-      <div class="legend-item">
-        <div class="legend-color" style="background-color: #ffe6e6;"></div>
-        <span>Domingos</span>
-      </div>
-      <div class="legend-item">
-        <div class="legend-color" style="background-color: #ff9999;"></div>
-        <span>Feriados</span>
-      </div>
-      <div class="legend-item">
-        <div class="legend-color" style="background-color: #ff8c42;"></div>
-        <span>Feriados movidos (Ley Emiliani)</span>
-      </div>
-      <div class="legend-item">
-        <div class="legend-color" style="background-color: #28a745;"></div>
-        <span>Carnavales (Barranquilla)</span>
-      </div>
-      <div class="legend-item">
-        <div class="legend-color" style="background-color: #6c757d;"></div>
-        <span>Miércoles de Ceniza</span>
-      </div>
-    </div>
-
     <div id="month-navigation" class="month-navigation" style="display: none;">
       <button id="prev-month">← Mes Anterior</button>
       <h2 id="current-month-year"></h2>
@@ -56,17 +79,12 @@
 
     <div id="calendar-container"></div>
   </div>
+
+  <footer>
+    <p>&copy; 2025 Desarrollado por Alejandro García - <a href="mailto:agarciagaray@pm.me">agarciagaray@pm.me</a></p>
+  </footer>
+
   <script src="script.js"></script>
-</body>
-
-</html>
-
-
-
-
-<footer>
-  <p>&copy; 2025 Desarrollado por Alejandro García - <a href="mailto:agarciagaray@pm.me">agarciagaray@pm.me</a></p>
-</footer>
 </body>
 
 </html>

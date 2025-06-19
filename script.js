@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevMonthBtn = document.getElementById('prev-month');
     const nextMonthBtn = document.getElementById('next-month');
     const currentMonthYear = document.getElementById('current-month-year');
+    const todayButton = document.getElementById('today-button');
 
     let currentMonth = new Date().getMonth();
     let currentYear = new Date().getFullYear();
@@ -30,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     viewSelect.addEventListener('change', renderCalendar);
+
     prevMonthBtn.addEventListener('click', () => {
         currentMonth--;
         if (currentMonth < 0) {
@@ -48,6 +50,20 @@ document.addEventListener('DOMContentLoaded', () => {
             yearSelect.value = currentYear;
         }
         renderCalendar();
+    });
+
+    todayButton.addEventListener('click', () => {
+        const today = new Date();
+        currentYear = today.getFullYear();
+        currentMonth = today.getMonth();
+        yearSelect.value = currentYear;
+
+        // Switch to monthly view to show today
+        viewSelect.value = 'monthly';
+        renderCalendar();
+
+        // Scroll to top to see the current month
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
     function getCarnivalDays(year) {
