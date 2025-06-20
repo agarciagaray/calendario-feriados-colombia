@@ -1,9 +1,14 @@
+html {
+    overflow-y: auto; /* Ensure vertical scroll is allowed if content overflows */
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f8f9fa;
     padding-top: 220px; /* Espacio para la cabecera fija - may need adjustment if header height changes */
+    overflow-y: auto; /* Explicitly allow vertical scrolling for the body too */
 }
 
 .header {
@@ -425,7 +430,6 @@ h1 {
     }
     #modal-holiday-description { /* Adjust description max-height for mobile */
         max-height: 150px; /* Or consider vh units like 20vh or 25vh */
-
     }
 }
 
