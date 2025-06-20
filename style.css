@@ -1,9 +1,14 @@
+html {
+    overflow-y: auto; /* Ensure vertical scroll is allowed if content overflows */
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f8f9fa;
-    padding-top: 220px; /* Espacio para la cabecera fija */
+    padding-top: 220px; /* Espacio para la cabecera fija - may need adjustment if header height changes */
+    overflow-y: auto; /* Explicitly allow vertical scrolling for the body too */
 }
 
 .header {
@@ -17,10 +22,39 @@ body {
     padding: 20px;
 }
 
+.header-container { /* Specific styles for the header's inner container */
+    display: flex;
+    align-items: center; /* Vertically align logo and main content */
+    gap: 15px; /* Space between logo and main content block */
+    /* max-width: 1200px; /* Already on .container, but ensure it's applied */
+    /* margin: 0 auto; /* Already on .container */
+    /* padding: 0; /* Override default .container padding if header needs full bleed for its elements */
+}
+
+#page-logo {
+    height: 40px;
+    width: auto;  /* Maintain aspect ratio */
+    flex-shrink: 0; /* Prevent logo from shrinking */
+}
+
+.header-main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center h1, controls, legend horizontally */
+}
+
+.header-main-content h1 {
+    /* text-align: center; /* This is already a global style for h1 */
+    width: 100%; /* Make h1 take full width of this container for centering */
+    margin-bottom: 15px; /* Adjust spacing below title */
+}
+
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 20px; /* General padding for non-header containers */
 }
 
 .card {
@@ -232,19 +266,36 @@ h1 {
     .annual-view {
         grid-template-columns: 1fr;
     }
+
+    .header-container {
+        gap: 10px; /* Reduce gap for smaller screens */
+        /* flex-direction: column; /* Option: Stack logo and content if needed */
+        /* align-items: center; */
+    }
+
+    #page-logo {
+        height: 30px; /* Smaller logo on mobile */
+    }
+
+    .header-main-content h1 {
+        font-size: 1.2em; /* Adjust title font size */
+        margin-bottom: 10px; /* Adjust spacing */
+    }
     
     .controls {
         flex-direction: column;
         align-items: center;
+        gap: 10px; /* Further reduce gap if needed */
     }
     
     .legend {
         display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 40px;
+        flex-direction: column; /* Changed from row to column */
+        align-items: center; /* Align items to center in column layout */
+        gap: 5px; /* Reduced gap for legend items */
         justify-content: center;
-        margin-bottom: 20px;
+        margin-bottom: 15px; /* Adjusted margin */
+        font-size: 0.8em; /* Smaller font for legend */
     }
 
     /* .legend span {
@@ -254,8 +305,131 @@ h1 {
     } */
     
     .day-cell {
-        font-size: 0.8em;
-        min-height: 25px;
+        font-size: 0.75em; /* Slightly reduced font size */
+        min-height: 20px; /* Reduced min-height */
+        padding: 4px 2px; /* Reduced padding */
+    }
+
+    .day-header {
+        font-size: 0.7em; /* Reduced font size for day headers */
+        padding: 6px 2px; /* Adjusted padding */
+    }
+
+    .monthly-view .month-name {
+        font-size: 1.3em; /* Adjust font size for monthly view month name */
+    }
+
+    .monthly-view .day-cell {
+        min-height: 40px; /* Adjust min-height for monthly view day cells */
+        padding: 6px;    /* Adjust padding for monthly view day cells */
+        font-size: 0.85em; /* Adjust font size for monthly view day cells */
+    }
+
+    .month-navigation button {
+        padding: 8px 12px; /* Adjust padding for navigation buttons */
+        font-size: 0.9em;  /* Adjust font size for navigation buttons */
+    }
+}
+
+/* Styles for Holiday Details Modal */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 2000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
+    animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto; /* 10% from the top and centered */
+    padding: 25px;
+    border: 1px solid #ddd;
+    width: 90%;
+    max-width: 450px; /* Max width */
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
+    animation: slideIn 0.3s ease-out;
+}
+
+.close-button {
+    color: #aaa;
+    /* float: right; */ /* Replaced by absolute positioning */
+    font-size: 32px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    transition: color 0.2s;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #333; /* Darker on hover/focus */
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#modal-holiday-name {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #007bff; /* Primary color for title */
+    font-size: 1.8em;
+}
+
+.modal-content p { /* General style for <p> tags in modal */
+    margin-bottom: 10px;
+    font-size: 1em;
+    line-height: 1.6;
+    color: #333;
+}
+
+#modal-holiday-description { /* Specific styling for the description paragraph */
+    max-height: 200px; /* Allow up to ~8-10 lines before scrolling */
+    overflow-y: auto;  /* Add scrollbar if content exceeds max-height */
+    padding-right: 10px; /* Space for scrollbar to avoid text overlap */
+    white-space: pre-line; /* Render \n from JS as line breaks */
+    margin-bottom: 10px; /* Ensure consistent spacing */
+    line-height: 1.6; /* Match general <p> line-height */
+    color: #333; /* Match general <p> color */
+}
+
+.modal-content p strong {
+    color: #555;
+}
+
+/* Animations for modal appearance */
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+@keyframes slideIn {
+    from {transform: translateY(-50px); opacity: 0;}
+    to {transform: translateY(0); opacity: 1;}
+}
+
+/* Responsive adjustments for the modal */
+@media (max-width: 600px) {
+    .modal-content {
+        margin: 20% auto; /* More margin for smaller screens */
+        width: 90%;
+        padding: 20px;
+    }
+    #modal-holiday-name {
+        font-size: 1.5em;
+    }
+    .modal-content p { /* General style for <p> tags in modal on mobile */
+        font-size: 0.95em;
+    }
+    #modal-holiday-description { /* Adjust description max-height for mobile */
+        max-height: 150px; /* Or consider vh units like 20vh or 25vh */
     }
 }
 
