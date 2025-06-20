@@ -429,6 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     description: 'Celebración Cultural'
                 };
             }
+
         } else if (carnivalData.ashWednesday.toDateString() === date.toDateString()) {
             holidayDataForModal = {
                 name: 'Miércoles de Ceniza',

@@ -425,6 +425,7 @@ h1 {
     }
     #modal-holiday-description { /* Adjust description max-height for mobile */
         max-height: 150px; /* Or consider vh units like 20vh or 25vh */
+
     }
 }
 
