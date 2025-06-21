@@ -180,7 +180,7 @@ h1 {
 .week-number-cell.ash-wednesday,
 .week-number-cell.today {
     background-color: #f0f0f0 !important;
-    color: #555 !important;
+    color: #888 !important;
     border: none !important;
     box-shadow: none !important;
     font-weight: normal !important;
