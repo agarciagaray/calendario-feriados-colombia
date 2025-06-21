@@ -172,6 +172,26 @@ function applyLeyEmiliani(holidays) {
     return emilianiHolidays;
 }
 
+/**
+ * Calculates the ISO 8601 week number for a given date.
+ * Weeks start on Monday. Week 1 is the week with the first Thursday of the year
+ * (or, equivalently, the week containing January 4th).
+ * @param {Date} date The date for which to calculate the week number.
+ * @returns {number} The ISO 8601 week number.
+ */
+function getISOWeekNumber(date) {
+    const d = new Date(date.valueOf()); // Create a copy to avoid modifying the original date
+    d.setHours(0, 0, 0, 0); // Standardize time to midnight
+    // Thursday in current week decides the year for ISO 8601 week numbering.
+    // Set date to Thursday of current week (Monday is 0, Sunday is 6 for d.getDay() after this)
+    d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+    // January 4th is always in week 1.
+    const week1 = new Date(d.getFullYear(), 0, 4);
+    // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+    // Calculate days from January 4th to the Thursday of the target week, then divide by 7.
+    return 1 + Math.round(((d.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+}
+
 // -----------------------------------------------------------------------------
 // DOMContentLoaded - UI Initialization and Event Handling
 // -----------------------------------------------------------------------------
@@ -482,9 +502,15 @@ document.addEventListener('DOMContentLoaded', () => {
             monthDiv.appendChild(monthName);
 
             const daysGrid = document.createElement('div');
-            daysGrid.classList.add('calendar-grid');
+            daysGrid.classList.add('calendar-grid'); // CSS will need grid-template-columns: auto repeat(7, 1fr);
 
-            // Add day headers (Dom, Lun, Mar, etc.)
+            // Add headers: Week #, and Day Names
+            const weekHeaderCell = document.createElement('div');
+            weekHeaderCell.classList.add('day-header', 'week-number-header');
+            weekHeaderCell.textContent = '#';
+            daysGrid.appendChild(weekHeaderCell);
+
+
             // FUTURE FEATURE: Localization: Day names should be dynamic.
             // Example: const dayNames = L[currentLang].dayNamesShort;
             const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
@@ -495,20 +521,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 daysGrid.appendChild(header);
             });
 
-            // Add empty cells for days before the first day of the month
-            const firstDayOfMonth = new Date(year, i, 1).getDay(); // 0 for Sunday, 1 for Monday...
-            for (let j = 0; j < firstDayOfMonth; j++) {
-                const emptyCell = document.createElement('div');
-                emptyCell.classList.add('day-cell', 'empty-cell');
-                daysGrid.appendChild(emptyCell);
-            }
-
-            // Add day cells for the month
+            const firstOfMonth = new Date(year, i, 1);
             const daysInMonth = new Date(year, i + 1, 0).getDate();
-            for (let day = 1; day <= daysInMonth; day++) {
-                const date = new Date(year, i, day);
-                const dayCell = createDayCell(date, holidays, carnivalData);
-                daysGrid.appendChild(dayCell);
+            const firstDayOfWeek = firstOfMonth.getDay(); // 0 for Sunday, 1 for Monday...
+
+            let currentDay = 1;
+            // Calculate number of rows needed for this month in an 8-column grid (Week# + 7 days)
+            // This ensures full weeks are shown, including leading/trailing empty cells.
+            const totalSlots = firstDayOfWeek + daysInMonth;
+            const numRows = Math.ceil(totalSlots / 7);
+
+            for (let rowIndex = 0; rowIndex < numRows; rowIndex++) {
+                let dateForWeekNumberCalc;
+                // Determine a date within the current row to calculate the week number
+                if (rowIndex === 0) {
+                    dateForWeekNumberCalc = new Date(year, i, 1);
+                } else {
+                    const dayForCalc = (rowIndex * 7) - firstDayOfWeek + 1;
+                    dateForWeekNumberCalc = new Date(year, i, Math.max(1, dayForCalc)); // Ensure it's at least the 1st
+                }
+
+                const weekNumber = getISOWeekNumber(dateForWeekNumberCalc);
+                const weekNumCell = document.createElement('div');
+                weekNumCell.classList.add('day-cell', 'week-number-cell');
+                weekNumCell.textContent = weekNumber;
+                daysGrid.appendChild(weekNumCell);
+
+                for (let colIndex = 0; colIndex < 7; colIndex++) {
+                    if (rowIndex === 0 && colIndex < firstDayOfWeek) {
+                        // Empty cells before the 1st of the month
+                        const emptyCell = document.createElement('div');
+                        emptyCell.classList.add('day-cell', 'empty-cell');
+                        daysGrid.appendChild(emptyCell);
+                    } else if (currentDay <= daysInMonth) {
+                        // Day cells for the current month
+                        const date = new Date(year, i, currentDay);
+                        const dayCell = createDayCell(date, holidays, carnivalData);
+                        daysGrid.appendChild(dayCell);
+                        currentDay++;
+                    } else {
+                        // Empty cells after the last day of the month
+                        const emptyCell = document.createElement('div');
+                        emptyCell.classList.add('day-cell', 'empty-cell');
+                        daysGrid.appendChild(emptyCell);
+                    }
+                }
+
             }
             monthDiv.appendChild(daysGrid);
             monthsContainer.appendChild(monthDiv);
@@ -535,6 +593,11 @@ document.addEventListener('DOMContentLoaded', () => {
         daysGrid.classList.add('calendar-grid');
 
         // Add day headers (Domingo, Lunes, Martes, etc.)
+        const weekHeaderCellMonthly = document.createElement('div');
+        weekHeaderCellMonthly.classList.add('day-header', 'week-number-header');
+        weekHeaderCellMonthly.textContent = '#'; // Or 'Sem.'
+        daysGrid.appendChild(weekHeaderCellMonthly);
+
         // FUTURE FEATURE: Localization: Day names should be dynamic.
         // Example: const dayNames = L[currentLang].dayNamesLong;
         const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -545,23 +608,57 @@ document.addEventListener('DOMContentLoaded', () => {
             daysGrid.appendChild(header);
         });
 
-        // Add empty cells for days before the first day of the month
-        const firstDayOfMonth = new Date(year, month, 1).getDay();
-        for (let j = 0; j < firstDayOfMonth; j++) {
-            const emptyCell = document.createElement('div');
-            emptyCell.classList.add('day-cell', 'empty-cell');
-            daysGrid.appendChild(emptyCell);
-        }
-
-        // Add day cells for the month
+        const firstOfMonth = new Date(year, month, 1);
         const daysInMonth = new Date(year, month + 1, 0).getDate();
-        for (let day = 1; day <= daysInMonth; day++) {
-            const date = new Date(year, month, day);
-            // For monthly view, we might pass an extra flag if specific styling is needed, but current createDayCell is generic.
-            const dayCell = createDayCell(date, holidays, carnivalData);
-            daysGrid.appendChild(dayCell);
-        }
+        const firstDayOfWeek = firstOfMonth.getDay(); // 0 for Sunday
 
+        let dayCounter = 1;
+        const daysInPreviousMonth = (month === 0) ? new Date(year - 1, 11, 0).getDate() : new Date(year, month, 0).getDate();
+
+        // Calculate number of rows needed
+        const totalSlots = firstDayOfWeek + daysInMonth;
+        const numRows = Math.ceil(totalSlots / 7);
+
+        for (let rowIndex = 0; rowIndex < numRows; rowIndex++) {
+            let dateForWeekNumberCalc;
+            if (rowIndex === 0) {
+                dateForWeekNumberCalc = new Date(year, month, 1);
+            } else {
+                const dayForCalc = (rowIndex * 7) - firstDayOfWeek + 1;
+                dateForWeekNumberCalc = new Date(year, month, Math.max(1, dayForCalc));
+            }
+
+            const weekNumber = getISOWeekNumber(dateForWeekNumberCalc);
+            const weekNumCell = document.createElement('div');
+            weekNumCell.classList.add('day-cell', 'week-number-cell');
+            weekNumCell.textContent = weekNumber;
+            daysGrid.appendChild(weekNumCell);
+
+            for (let colIndex = 0; colIndex < 7; colIndex++) {
+                const currentGridDay = rowIndex * 7 + colIndex;
+                if (rowIndex === 0 && colIndex < firstDayOfWeek) {
+                    // Empty cells for previous month's days
+                    const prevMonthDay = daysInPreviousMonth - firstDayOfWeek + colIndex + 1;
+                    const emptyCell = document.createElement('div');
+                    emptyCell.classList.add('day-cell', 'empty-cell', 'prev-month-day');
+                    // emptyCell.textContent = prevMonthDay; // Optional: show prev month day numbers
+                    daysGrid.appendChild(emptyCell);
+                } else if (dayCounter <= daysInMonth) {
+                    // Day cells for the current month
+                    const date = new Date(year, month, dayCounter);
+                    const dayCell = createDayCell(date, holidays, carnivalData);
+                    daysGrid.appendChild(dayCell);
+                    dayCounter++;
+                } else {
+                    // Empty cells for next month's days
+                    // const nextMonthDay = currentGridDay - daysInMonth - firstDayOfWeek + 1;
+                    const emptyCell = document.createElement('div');
+                    emptyCell.classList.add('day-cell', 'empty-cell', 'next-month-day');
+                    // emptyCell.textContent = nextMonthDay; // Optional: show next month day numbers
+                    daysGrid.appendChild(emptyCell);
+                }
+            }
+        }
         monthlyContainer.appendChild(daysGrid);
         calendarContainer.appendChild(monthlyContainer);
     }
@@ -684,7 +781,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (exportICalButton) {
         exportICalButton.addEventListener('click', handleExportICal);
     }
-
 });
 
 // For testing purposes, expose functions if running in a test-like environment (e.g. test-runner.html)
@@ -695,6 +791,7 @@ if (typeof window !== 'undefined' && window.location && window.location.pathname
         getHolidays,
         applyLeyEmiliani,
         formatICalDate, // Expose for potential testing
-        generateICalData // Expose for potential testing
+        generateICalData, // Expose for potential testing
+        getISOWeekNumber // Expose for potential testing
     };
 }

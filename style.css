@@ -145,10 +145,48 @@ h1 {
 
 .calendar-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    /* grid-template-columns: repeat(7, 1fr); */ /* Old 7-column layout */
+    grid-template-columns: 3em repeat(7, 1fr); /* Week num col (3em), then 7 day cols */
     gap: 1px;
     background-color: #ddd;
 }
+
+.week-number-header { /* Styling for the week number column header cell */
+    /* Most styles inherited from .day-header */
+    font-size: 0.75em; /* Slightly smaller than regular day headers */
+    /* text-align: center; /* Ensure it's centered if not by .day-header */
+}
+
+.week-number-cell { /* Styling for the week number data cells */
+    background-color: #f0f0f0; /* Light gray background */
+    color: #555;             /* Darker gray text */
+    font-size: 0.8em;         /* Smaller font size than day numbers */
+    font-weight: normal;      /* Ensure it's not bold if .day-cell is */
+    cursor: default;          /* Indicate it's not clickable */
+    display: flex;            /* For vertical centering */
+    align-items: center;
+    justify-content: center;
+}
+
+.week-number-cell:hover {
+    background-color: #f0f0f0; /* Keep background consistent on hover, no change */
+}
+
+/* Prevent week number cells from picking up styles from special day classes */
+.week-number-cell.sunday,
+.week-number-cell.holiday,
+.week-number-cell.emiliani-holiday,
+.week-number-cell.carnival,
+.week-number-cell.ash-wednesday,
+.week-number-cell.today {
+    background-color: #f0f0f0 !important;
+    color: #555 !important;
+    border: none !important;
+    box-shadow: none !important;
+    font-weight: normal !important;
+    text-decoration: none !important; /* Remove underline from Ash Wednesday if applied */
+}
+
 
 .day-header {
     background-color: #f8f9fa;
@@ -303,16 +341,28 @@ h1 {
         align-items: center;
         gap: 6px;
     } */
+
+    .calendar-grid {
+        grid-template-columns: 2.5em repeat(7, 1fr); /* Adjust week number col width for mobile */
+    }
     
-    .day-cell {
-        font-size: 0.75em; /* Slightly reduced font size */
-        min-height: 20px; /* Reduced min-height */
-        padding: 4px 2px; /* Reduced padding */
+    .day-cell { /* This applies to week-number-cell too due to class inheritance */
+        font-size: 0.75em;
+        min-height: 20px;
+        padding: 4px 2px;
     }
 
-    .day-header {
-        font-size: 0.7em; /* Reduced font size for day headers */
-        padding: 6px 2px; /* Adjusted padding */
+    .week-number-cell { /* Specific overrides for week number cell on mobile */
+        font-size: 0.7em; /* Even smaller font for week numbers on mobile */
+        /* Padding is inherited from .day-cell, which is fine */
+    }
+
+    .day-header { /* This applies to week-number-header too */
+        font-size: 0.7em;
+        padding: 6px 2px;
+    }
+    .week-number-header { /* Specific overrides for week number header on mobile */
+        font-size: 0.65em; /* Adjust header font size */
     }
 
     .monthly-view .month-name {
