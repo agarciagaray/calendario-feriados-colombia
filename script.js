@@ -192,7 +192,6 @@ function getISOWeekNumber(date) {
     return 1 + Math.round(((d.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
 }
 
-
 // -----------------------------------------------------------------------------
 // DOMContentLoaded - UI Initialization and Event Handling
 // -----------------------------------------------------------------------------
@@ -450,6 +449,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     description: 'Celebración Cultural'
                 };
             }
+
         } else if (carnivalData.ashWednesday.toDateString() === date.toDateString()) {
             holidayDataForModal = {
                 name: 'Miércoles de Ceniza',
@@ -510,6 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
             weekHeaderCell.textContent = '#';
             daysGrid.appendChild(weekHeaderCell);
 
+
             // FUTURE FEATURE: Localization: Day names should be dynamic.
             // Example: const dayNames = L[currentLang].dayNamesShort;
             const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
@@ -565,6 +566,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         daysGrid.appendChild(emptyCell);
                     }
                 }
+
             }
             monthDiv.appendChild(daysGrid);
             monthsContainer.appendChild(monthDiv);
@@ -779,7 +781,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (exportICalButton) {
         exportICalButton.addEventListener('click', handleExportICal);
     }
-
 });
 
 // For testing purposes, expose functions if running in a test-like environment (e.g. test-runner.html)
