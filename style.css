@@ -159,7 +159,7 @@ h1 {
 
 .week-number-cell { /* Styling for the week number data cells */
     background-color: #f0f0f0; /* Light gray background */
-    color: #555;             /* Darker gray text */
+    color: #888;             /* Darker gray text */
     font-size: 0.8em;         /* Smaller font size than day numbers */
     font-weight: normal;      /* Ensure it's not bold if .day-cell is */
     cursor: default;          /* Indicate it's not clickable */
